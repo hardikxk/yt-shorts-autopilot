@@ -1,0 +1,23 @@
+# Local secrets
+.env
+.dev.vars
+.secrets/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# Local tooling
+node_modules/
+.wrangler/
+
+# Work files
+.work/
+smoke-output/
+.tmp-*/
+
+# OS / editors
+.DS_Store
+Thumbs.db

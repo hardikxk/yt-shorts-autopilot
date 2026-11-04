@@ -1,0 +1,21 @@
+{
+  "source_mode": "channel",
+  "rights_mode": "owned",
+  "own_channel_id": "UCH1EnMaLc-39mTcn5J2bTZw",
+  "source_channel_ids": [],
+  "region_code": "IN",
+  "max_video_age_hours": 16,
+  "min_source_seconds": 180,
+  "max_source_seconds": 1800,
+  "shorts_per_day": 4,
+  "min_shorts": 3,
+  "short_seconds": 45,
+  "short_gap_seconds": 2,
+  "upload_privacy": "private",
+  "upload_category_id": "24",
+  "upload_delay_seconds": 45,
+  "made_for_kids": false,
+  "dry_run": false,
+  "max_upload_bytes": 94371840,
+  "state_path": "state/used_videos.json"
+}
