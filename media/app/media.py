@@ -78,7 +78,12 @@ def probe_media(path: Path, settings: Settings) -> dict[str, Any]:
     }
 
 
-def download_source(video_id: str, work_dir: Path, settings: Settings) -> Path:
+def download_source(
+    video_id: str,
+    work_dir: Path,
+    settings: Settings,
+    cookies_file: Path | None = None,
+) -> Path:
     target = work_dir / "source.%(ext)s"
     url = f"https://www.youtube.com/watch?v={video_id}"
     args = [
@@ -108,7 +113,9 @@ def download_source(video_id: str, work_dir: Path, settings: Settings) -> Path:
         "--max-filesize",
         "2G",
     ]
-    if settings.ytdlp_cookies:
+    if cookies_file is not None:
+        args.extend(["--cookies", str(cookies_file)])
+    elif settings.ytdlp_cookies:
         args.extend(["--cookies", settings.ytdlp_cookies])
     args.extend(settings.ytdlp_extra_args)
     args.append(url)

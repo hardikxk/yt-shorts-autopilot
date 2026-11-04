@@ -263,9 +263,37 @@ The smoke test creates a synthetic source and validates both the audio and silen
 
 ---
 
+## YouTube bot check / cookies
+
+GitHub-hosted runners often get:
+
+```text
+Sign in to confirm you're not a bot
+```
+
+The fix is to supply a `cookies.txt` file to `yt-dlp` through the `YTDLP_COOKIES_B64` secret.
+
+1. Install a browser extension such as **Get cookies.txt LOCALLY**.
+2. Sign in to YouTube with the channel account.
+3. Export cookies for `youtube.com` in **Netscape** format as `cookies.txt`.
+4. Base64-encode it and set the secret:
+
+```powershell
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("cookies.txt")) |
+  gh secret set YTDLP_COOKIES_B64 --repo hardikxk/yt-shorts-autopilot
+```
+
+On macOS/Linux:
+
+```bash
+base64 -w0 cookies.txt | gh secret set YTDLP_COOKIES_B64
+```
+
+Never commit `cookies.txt`. It grants access to the signed-in Google account, so treat it like a password. Cookies expire; repeat this when downloads start failing again.
+
 ## Limitations
 
-- YouTube can challenge `yt-dlp` from GitHub runner IPs with “Sign in to confirm you're not a bot.”
+- YouTube can challenge `yt-dlp` from GitHub runner IPs with “Sign in to confirm you're not a bot.” The `YTDLP_COOKIES_B64` secret fixes this, but the cookies expire.
 - GitHub Actions cron can start a few minutes late.
 - A daily 20–30 minute job is within the free private-repo allowance (2,000 minutes/month); public repos have unlimited standard-runner minutes.
 - GitHub Actions scheduled workflows can be delayed or disabled after long repository inactivity; keep the repo active.

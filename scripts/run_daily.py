@@ -6,6 +6,7 @@ Run locally with the same environment variables used by the workflow.
 
 from __future__ import annotations
 
+import base64
 import json
 import os
 import shutil
@@ -512,8 +513,26 @@ def run() -> int:
     work_dir = settings.work_root / f"{video['id']}-{utc_now().strftime('%Y%m%d-%H%M%S')}"
     work_dir.mkdir(parents=True, exist_ok=True)
     rendered: list[dict[str, Any]] = []
+    cookie_file: Path | None = None
     try:
-        source = download_source(video["id"], work_dir, settings)
+        cookies_b64 = os.getenv("YTDLP_COOKIES_B64", "").strip()
+        if cookies_b64:
+            try:
+                cookie_file = work_dir / "cookies.txt"
+                cookie_file.write_bytes(base64.b64decode(cookies_b64, validate=True))
+                print("Using YouTube cookies from YTDLP_COOKIES_B64.")
+            except (ValueError, OSError) as error:
+                raise PipelineError(f"Could not decode YTDLP_COOKIES_B64: {error}") from error
+        try:
+            source = download_source(
+                video["id"],
+                work_dir,
+                settings,
+                cookies_file=cookie_file,
+            )
+        finally:
+            if cookie_file is not None:
+                cookie_file.unlink(missing_ok=True)
         info = probe_media(source, settings)
         print(f"Downloaded: {source} ({info['duration']:.1f}s, {info['width']}x{info['height']})")
         if info["duration"] < config["min_source_seconds"]:

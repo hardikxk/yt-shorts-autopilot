@@ -48,10 +48,19 @@ Each upload costs 1,600 units; the default project quota is 10,000/day.
 
 Symptoms: `Sign in to confirm you're not a bot`, HTTP 403, or no formats.
 
-- Re-run the workflow; it may be transient.
-- Update `yt-dlp` by re-running the workflow (it installs the latest allowed version).
-- GitHub runner IPs are datacenter IPs and may be challenged. There is no CAPTCHA bypass in this repo.
-- Use your own channel and a fresh upload to test.
+The workflow supports a `YTDLP_COOKIES_B64` secret containing a base64 Netscape `cookies.txt` exported from a signed-in YouTube browser session.
+
+1. Export `cookies.txt` for `youtube.com` in Netscape format.
+2. Base64-encode and set the secret:
+
+```powershell
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("cookies.txt")) |
+  gh secret set YTDLP_COOKIES_B64 --repo hardikxk/yt-shorts-autopilot
+```
+
+3. Re-run the workflow.
+
+Treat cookies like a password. They expire and must be refreshed. Do not commit them.
 
 ## Upload failures
 
