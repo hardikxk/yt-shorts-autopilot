@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -117,6 +118,14 @@ def download_source(
         args.extend(["--cookies", str(cookies_file)])
     elif settings.ytdlp_cookies:
         args.extend(["--cookies", settings.ytdlp_cookies])
+    pot_provider = os.getenv("YTDLP_POT_PROVIDER_URL", "").strip()
+    if pot_provider:
+        args.extend(
+            [
+                "--extractor-args",
+                f"youtubepot-bgutilhttp:base_url={pot_provider}",
+            ]
+        )
     args.extend(settings.ytdlp_extra_args)
     args.append(url)
 
