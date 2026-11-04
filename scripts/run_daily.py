@@ -328,6 +328,32 @@ def list_trending(region_code: str, access_token: str) -> list[dict[str, Any]]:
     return [map_video(item) for item in payload.get("items", [])]
 
 
+def search_recent_creative_commons(
+    config: dict[str, Any], access_token: str
+) -> list[dict[str, Any]]:
+    published_after = (
+        utc_now() - timedelta(hours=int(config["max_video_age_hours"]))
+    ).isoformat().replace("+00:00", "Z")
+    payload = api_get(
+        "search",
+        {
+            "part": "snippet",
+            "type": "video",
+            "videoLicense": "creativeCommon",
+            "order": "viewCount",
+            "publishedAfter": published_after,
+            "regionCode": str(config["region_code"]),
+            "maxResults": "25",
+        },
+        access_token,
+    )
+    ids = [
+        str(((item.get("id") or {}).get("videoId") or ""))
+        for item in payload.get("items", [])
+    ]
+    return fetch_videos(ids, access_token)
+
+
 def rights_reason(video: dict[str, Any], config: dict[str, Any]) -> str | None:
     mode = str(config["rights_mode"]).lower().replace("_", "")
     if mode in {"creativecommon", "cc"}:
@@ -356,6 +382,15 @@ def select_video(
             raise PipelineError(f"Video not found: {config['video_id']}")
     elif str(config["source_mode"]).lower() == "trending":
         candidates = list_trending(str(config["region_code"]), access_token)
+    elif str(config["source_mode"]).lower() in {"search", "creative_commons"}:
+        if str(config["rights_mode"]).lower().replace("_", "") not in {
+            "creativecommon",
+            "cc",
+        }:
+            raise PipelineError(
+                "source_mode=search requires rights_mode=creativeCommon"
+            )
+        candidates = search_recent_creative_commons(config, access_token)
     elif str(config["source_mode"]).lower() == "channel":
         channel_ids = [str(item) for item in config.get("source_channel_ids", [])]
         if not channel_ids and config.get("own_channel_id"):

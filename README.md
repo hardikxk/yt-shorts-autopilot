@@ -10,7 +10,7 @@ It runs entirely on **GitHub Actions**:
 - optional Resend email for success summaries;
 - a small JSON file committed back to the repo prevents reusing the same source video.
 
-> **Rights notice:** do not use this to re-upload videos you do not own or have permission to reuse. The default configuration only accepts your own channel (`rights_mode: owned`). For third-party sources, use `creativeCommon` or an explicit `allowlist` with written permission.
+> **Rights notice:** do not use this to re-upload videos you do not own or have permission to reuse. The default configuration searches recent **Creative Commons** videos (`rights_mode: creativeCommon`). For your own channel, switch to `source_mode: channel` + `rights_mode: owned`. For third-party sources, use an explicit `allowlist` with written permission.
 
 ---
 
@@ -94,9 +94,9 @@ Edit [config/pipeline.json](config/pipeline.json):
 
 ```jsonc
 {
-  "source_mode": "channel",
-  "rights_mode": "owned",
-  "own_channel_id": "YOUR_CHANNEL_ID",
+  "source_mode": "search",
+  "rights_mode": "creativeCommon",
+  "region_code": "IN",
   "max_video_age_hours": 16,
   "shorts_per_day": 4,
   "min_shorts": 3,
@@ -104,6 +104,16 @@ Edit [config/pipeline.json](config/pipeline.json):
   "upload_privacy": "private",
   "dry_run": false
 }
+```
+
+`source_mode: search` asks the YouTube Search API for recent Creative Commons videos ordered by view count, then applies the same duration/live/privacy/used filters.
+
+For your own channel instead:
+
+```jsonc
+"source_mode": "channel",
+"rights_mode": "owned",
+"own_channel_id": "YOUR_CHANNEL_ID"
 ```
 
 For a first test, set:
@@ -115,7 +125,7 @@ For a first test, set:
 
 After the dry run succeeds, set `dry_run` back to `false` and `max_video_age_hours` back to `16`.
 
-For Creative Commons trending videos instead of your own channel:
+For the regional trending chart instead of a search:
 
 ```jsonc
 "source_mode": "trending",

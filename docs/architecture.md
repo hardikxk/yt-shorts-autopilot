@@ -23,6 +23,7 @@ There is no server, container, database, or Cloudflare account.
 
 `config/pipeline.json` controls the source:
 
+- `source_mode: search` uses the YouTube Search API for recent Creative Commons videos ordered by view count.
 - `source_mode: channel` reads the uploads playlist of `own_channel_id` or `source_channel_ids`.
 - `source_mode: trending` reads the regional most-popular chart.
 - `rights_mode` filters to your channel, an allowlist, or Creative Commons.
