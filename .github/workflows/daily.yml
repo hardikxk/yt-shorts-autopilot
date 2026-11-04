@@ -55,6 +55,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up Node.js for yt-dlp EJS challenges
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
@@ -80,6 +85,7 @@ jobs:
           ALERT_EMAIL_FROM: ${{ secrets.ALERT_EMAIL_FROM }}
           YTDLP_COOKIES_B64: ${{ secrets.YTDLP_COOKIES_B64 }}
           YTDLP_POT_PROVIDER_URL: http://127.0.0.1:4416
+          YTDLP_JS_RUNTIME: node
           VIDEO_ID: ${{ inputs.video_id }}
           DRY_RUN: ${{ inputs.dry_run }}
           FORCE: ${{ inputs.force }}

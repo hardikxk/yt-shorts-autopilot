@@ -126,6 +126,9 @@ def download_source(
                 f"youtubepot-bgutilhttp:base_url={pot_provider}",
             ]
         )
+    js_runtime = os.getenv("YTDLP_JS_RUNTIME", "node").strip()
+    if js_runtime:
+        args.extend(["--js-runtimes", js_runtime])
     args.extend(settings.ytdlp_extra_args)
     args.append(url)
 
