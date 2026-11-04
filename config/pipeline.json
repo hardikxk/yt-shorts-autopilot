@@ -11,7 +11,7 @@
   "min_shorts": 3,
   "short_seconds": 45,
   "short_gap_seconds": 2,
-  "upload_privacy": "private",
+  "upload_privacy": "public",
   "upload_category_id": "24",
   "upload_delay_seconds": 45,
   "made_for_kids": false,
